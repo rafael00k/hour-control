@@ -1,17 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import databaseConfig from './config/database.config';
-import { TimeSheetModule } from './time-sheet/time-sheet.module';
+import { TimeSheetModule } from './time-sheet/timeSheet.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-    load: [
-      databaseConfig
-    ]
-  }), TimeSheetModule],
+  imports: [MongooseModule.forRoot(process.env.MONGODB_URL), TimeSheetModule],
   controllers: [AppController],
   providers: [AppService],
 })
