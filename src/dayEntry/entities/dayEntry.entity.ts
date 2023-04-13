@@ -1,6 +1,6 @@
 import { Prop, Schema } from "@nestjs/mongoose"
 import mongoose from "mongoose"
-import { TimeSheet } from "./timeSheet.entity"
+import { TimeSheet } from "../../timeSheet/entities/timeSheet.entity"
 
 @Schema()
 export class DayEntry {

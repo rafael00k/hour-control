@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model,model } from "mongoose";
-import { DayEntry } from "../entities/dayEntry.entity";
+import { Model } from "mongoose";
+import { DayEntry } from "../../dayEntry/entities/dayEntry.entity";
 import { TimeSheet } from "../entities/timeSheet.entity";
 
 @Injectable()
