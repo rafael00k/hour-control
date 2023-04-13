@@ -4,7 +4,7 @@
 Api que simula o registro de pontos
 
 ## Stack
-[![My Skills](https://skillicons.dev/icons?i=nodejs,ts,nestjs,mongodb)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=nodejs,ts,nestjs,mongodb,docker)](https://skillicons.dev)
 
 ## Instalação de Pacotes
 
