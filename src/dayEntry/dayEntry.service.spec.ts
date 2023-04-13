@@ -8,6 +8,7 @@ import * as dayjs from 'dayjs'
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { DayEntryDataSource } from '../timeSheet/datasource/dayEntry.datasource';
 import { TimeSheetDataSource } from '../timeSheet/datasource/timeSheet.datasource';
+import { DateStringTypes } from 'src/common/dateStrinTypes';
 
 
 describe('DayEntryService', () => {
@@ -37,8 +38,8 @@ describe('DayEntryService', () => {
   describe('Create Entry',() => {
     it('should create a new dayEntry for a empty month', async () => {
       const entryHour = new Date()
-      const day = dayjs(entryHour).format('YYYY-MM-DD')
-      const month = dayjs(entryHour).format('YYYY-MM-DD')
+      const day = dayjs(entryHour).format(DateStringTypes.DAY)
+      const month = dayjs(entryHour).format(DateStringTypes.MONTH)
       jest.spyOn(timeSheetDataSource, 'findByMonth').mockReturnValue(undefined)
       jest.spyOn(dayEntryDataSource,'findDayEntryByDay').mockReturnValue(undefined)
       jest.spyOn(timeSheetDataSource,'create').mockResolvedValue({
@@ -53,7 +54,7 @@ describe('DayEntryService', () => {
         }
       )
       
-      expect(await service.createEntry({dataHora: entryHour})).toStrictEqual({
+      expect(await service.createEntry({dataHora: entryHour.toISOString()})).toStrictEqual({
         day,
         hours: [entryHour],
         timeSheet: new TimeSheet()
@@ -63,14 +64,14 @@ describe('DayEntryService', () => {
   
     it('should not allow more than 4 entry for a day', async () => {
       const entryHour = new Date()
-      const day = dayjs(entryHour).format('YYYY-MM-DD')
+      const day = dayjs(entryHour).format(DateStringTypes.DAY)
       jest.spyOn(dayEntryDataSource,'findDayEntryByDay').mockResolvedValue({
         day,
         hours: [entryHour,entryHour,entryHour,entryHour],
         timeSheet: new TimeSheet() 
       })
       try {
-        await service.createEntry({dataHora: entryHour})
+        await service.createEntry({dataHora: entryHour.toISOString()})
       } catch (error) {
         expect(error).toBeInstanceOf(ForbiddenException)
         expect(error?.message).toEqual('Apenas 4 horários podem ser registrados por dia')  
@@ -79,14 +80,14 @@ describe('DayEntryService', () => {
   
     it('should not allow a same hour entry twice', async() => {
       const entryHour = new Date()
-      const day = dayjs(entryHour).format('YYYY-MM-DD')
+      const day = dayjs(entryHour).format(DateStringTypes.DAY)
       jest.spyOn(dayEntryDataSource,'findDayEntryByDay').mockResolvedValue({
         day,
         hours: [entryHour,entryHour],
         timeSheet: new TimeSheet() 
       })
       try {
-        await service.createEntry({dataHora: entryHour})
+        await service.createEntry({dataHora: entryHour.toISOString()})
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException)
         expect(error?.message).toEqual('Horário já registrado')  

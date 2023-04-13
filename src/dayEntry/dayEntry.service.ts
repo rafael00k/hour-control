@@ -4,6 +4,7 @@ import { TimeSheetDataSource } from '../timeSheet/datasource/timeSheet.datasourc
 import { CreateEntryInputDto } from './dto/createEntry.input.dto';
 import { DayEntry } from './entities/dayEntry.entity';
 import * as dayjs from 'dayjs'
+import { DateStringTypes } from 'src/common/dateStrinTypes';
 
 
 
@@ -14,31 +15,31 @@ export class DayEntryService {
     @Inject(TimeSheetDataSource) private readonly timeSheetDataSource: TimeSheetDataSource
   ) {}
   async createEntry(input: CreateEntryInputDto): Promise<DayEntry> {
-    const day = dayjs(input.dataHora).format('YYYY-MM-DD')
+    const inputDate = new Date(input.dataHora)
+    const day = dayjs(input.dataHora).format(DateStringTypes.DAY)
     const dayEntry = await this.dayEntryDataSource.findDayEntryByDay(day)
     if(!dayEntry) { 
-      return this.handleTimeShetCreation(input.dataHora)
+      return this.handleTimeShetCreation(inputDate)
     }
-    this.validateDayEntry(input.dataHora,dayEntry)
-    return this.dayEntryDataSource.addEntry(day,input.dataHora)
+    this.validateDayEntry(inputDate,dayEntry)
+    return this.dayEntryDataSource.addEntry(day,inputDate)
   }
 
   private validateDayEntry(entry: Date, dayEntry?: DayEntry) {
-
+    
     if( dayEntry && dayEntry?.hours?.length >= 4) {
      throw new ForbiddenException('Apenas 4 horários podem ser registrados por dia') 
     }
 
-    const sameEntry = dayEntry.hours.find(hour => hour === entry)
-
+    const sameEntry = dayEntry.hours.find(hour => hour.getTime() === entry.getTime())
     if(sameEntry) {
       throw new ConflictException('Horário já registrado') 
     }
   }
 
   private async handleTimeShetCreation(entry: Date): Promise<DayEntry> {
-    const month = dayjs(entry).format('YYYY-MM')
-    const day = dayjs(entry).format('YYYY-MM-DD')
+    const month = dayjs(entry).format(DateStringTypes.MONTH)
+    const day = dayjs(entry).format(DateStringTypes.DAY)
     const monthSheet = await this.timeSheetDataSource.findByMonth(month)
     if(!monthSheet) {
       const timeSheet = await this.timeSheetDataSource.create(month)

@@ -1,4 +1,5 @@
 import * as dayjs from 'dayjs'
+import { DateStringTypes } from 'src/common/dateStrinTypes'
 import { mapCreateEntryToDTO } from 'src/dayEntry/dto/dayEntry.mapper'
 import { mapTimeSheetToDTO } from './dto/timeSheet.mapper'
 
@@ -9,15 +10,15 @@ describe('TimeSheetMapper', () => {
     const entryHourDate = new Date(2022, 8, 22, 8)
     const entryHour = dayjs(entryHourDate)
     const nextDay = entryHour.add(1, 'day')
-    const month = entryHour.format("YYYY-MM")
+    const month = entryHour.format(DateStringTypes.MONTH)
     const mockEntrys = {
       month,
       entrys: [{
-        day: entryHour.format("YYYY-MM-DD"),
+        day: entryHour.format(DateStringTypes.DAY),
         hours: [entryHourDate, entryHour.add(4, 'hours').toDate()],
         timeSheet: { month }
       }, {
-        day: nextDay.format("YYYY-MM-DD"),
+        day: nextDay.format(DateStringTypes.DAY),
         hours: [entryHourDate, entryHour.add(3, 'hours').toDate()],
         timeSheet: { month }
       }]
